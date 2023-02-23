@@ -1,8 +1,10 @@
 import sys
+import pandas as pd
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import QTextCursor
 from PyQt5 import QtCore
+from PyQt5 import QtGui
 
 form_class = uic.loadUiType("C:\\project2\\bob.ui")[0]
 
@@ -15,8 +17,29 @@ class WindowClass(QMainWindow, form_class):
         self.pushButton_enroll.clicked.connect(self.enrollFunction)
         self.pushButton_history.clicked.connect(self.historyFunction)
         self.pushButton_info.clicked.connect(self.infoFunction)
+        
     def viewFunction(self):
-        print("test")
+        column_headers = ['품명', '현재 수량', '기준 수량','단위','분류','판매처','주문필요량']
+        self.tableWidget.setHorizontalHeaderLabels(column_headers)
+        data = pd.read_csv("test.csv", encoding = 'euc-kr')
+        row = data.shape[0]
+        col = data.shape[1]
+        self.tableWidget.setRowCount(row)
+        self.tableWidget.setColumnCount(col+1)
+        self.setTableWidgetData(data, row, col)
+
+    def setTableWidgetData(self,data,row,col):
+        for i in range (0, row):
+            for j in range (0,col):
+               if j == 1 or j == 2:
+                   self.tableWidget.setItem(i, j, QTableWidgetItem(str(data.iloc[i][j])))
+               else:
+                   self.tableWidget.setItem(i, j, QTableWidgetItem(data.iloc[i][j]))
+        for i in range (0, row):
+            self.tableWidget.setItem(i,6,QTableWidgetItem(str(int(self.tableWidget.item(i,2).text())-int(self.tableWidget.item(i,1).text()))))
+            if int(self.tableWidget.item(i,6).text()) != 0:
+                self.tableWidget.item(i, 6).setBackground(QtGui.QColor(200,0,0))
+        self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
     def manageFunction(self):
         print("test")
