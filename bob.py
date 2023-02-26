@@ -8,6 +8,20 @@ from PyQt5 import QtGui
 
 form_class = uic.loadUiType("C:\\project2\\bob.ui")[0]
 
+class enroll(QDialog):
+    def __init__(self, parent):
+        super(enroll,self).__init__(parent)
+        uic.loadUi("C:\\project2\\enroll.ui", self)
+        self.show()
+        self.parent = parent
+        self.pushButton_finalenroll.clicked.connect(self.finalenrollFunction)
+        self.pushButton_cancle.clicked.connect(self.close)
+
+    def finalenrollFunction(self):
+        data = pd.read_csv("test.csv", encoding = 'euc-kr')
+        data.loc[data.shape[0]+1] = [self.lineEdit.text(),self.lineEdit_2.text(),self.lineEdit_3.text(),self.lineEdit_4.text(),self.lineEdit_5.text(),self.lineEdit_6.text()]
+        data.to_csv("test.csv", encoding = 'euc-kr')
+
 class WindowClass(QMainWindow, form_class):
     def __init__(self):
         super().__init__()
@@ -17,7 +31,20 @@ class WindowClass(QMainWindow, form_class):
         self.pushButton_enroll.clicked.connect(self.enrollFunction)
         self.pushButton_history.clicked.connect(self.historyFunction)
         self.pushButton_info.clicked.connect(self.infoFunction)
-        
+        self.pushButton_Search.clicked.connect(self.searchFunction)
+
+    def searchFunction(self):
+        column_headers = ['품명', '현재 수량', '기준 수량','단위','분류','판매처','주문필요량']
+        self.tableWidget.setHorizontalHeaderLabels(column_headers)
+        text = self.lineEdit_Search.text()
+        data = pd.read_csv("test.csv", encoding = 'euc-kr')
+        searched_data = data[data[self.comboBox.currentText()].str.contains(text)]
+        row = searched_data.shape[0]
+        col = searched_data.shape[1]
+        self.tableWidget.setRowCount(row)
+        self.tableWidget.setColumnCount(col+1)
+        self.setTableWidgetData(searched_data, row, col)
+
     def viewFunction(self):
         column_headers = ['품명', '현재 수량', '기준 수량','단위','분류','판매처','주문필요량']
         self.tableWidget.setHorizontalHeaderLabels(column_headers)
@@ -45,7 +72,7 @@ class WindowClass(QMainWindow, form_class):
         print("test")
         
     def enrollFunction(self):
-        print("test")
+        enroll(self)
         
     def historyFunction(self):
         print("test")
