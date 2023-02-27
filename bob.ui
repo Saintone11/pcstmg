@@ -37,14 +37,14 @@
      <bool>true</bool>
     </property>
     <property name="text">
-     <string>               BOB PC 재고 관리 프로그램</string>
+     <string>                PC방 재고 관리 프로그램</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_View">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>170</y>
+      <y>230</y>
       <width>151</width>
       <height>71</height>
      </rect>
@@ -53,24 +53,11 @@
      <string>전체 재고 조회</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_manage">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>290</y>
-      <width>151</width>
-      <height>71</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>재고 입출고 관리</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="pushButton_enroll">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>400</y>
+      <y>480</y>
       <width>151</width>
       <height>71</height>
      </rect>
@@ -79,30 +66,30 @@
      <string>재고 등록</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_history">
+   <widget class="QPushButton" name="pushButton_manage">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>510</y>
+      <y>350</y>
       <width>151</width>
       <height>71</height>
      </rect>
     </property>
     <property name="text">
-     <string>기간별 입출고 내역</string>
+     <string>재고 관리</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_info">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>630</y>
+      <y>610</y>
       <width>151</width>
       <height>71</height>
      </rect>
     </property>
     <property name="text">
-     <string>거래처 정보</string>
+     <string>판매처 정보</string>
     </property>
    </widget>
    <widget class="QTableWidget" name="tableWidget">
@@ -116,7 +103,7 @@
     </property>
     <property name="font">
      <font>
-      <pointsize>20</pointsize>
+      <pointsize>15</pointsize>
       <weight>75</weight>
       <bold>true</bold>
      </font>

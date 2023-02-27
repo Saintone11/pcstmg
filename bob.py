@@ -8,6 +8,54 @@ from PyQt5 import QtGui
 
 form_class = uic.loadUiType("C:\\project2\\bob.ui")[0]
 
+class manage(QDialog):
+    def __init__(self, parent):
+        super(manage, self).__init__(parent)
+        uic.loadUi("C:\\project2\\delete.ui", self)
+        self.show()
+        self.pushButton_dsearch.clicked.connect(self.dsearchFunction)
+        
+        
+
+    def inFunction(self):
+        name = self.lineEdit.text()
+        num = self.lineEdit_4.text()
+        data = pd.read_csv("test.csv", encoding = 'euc-kr')
+        data.loc[data["품명"]==name,"현재 수량"] = int(data.loc[data["품명"]==name,"현재 수량"]) + int(num)
+        data.to_csv("test.csv", encoding = 'euc-kr',index=False)
+        self.close()
+
+    def outFunction(self):
+        name = self.lineEdit.text()
+        num = self.lineEdit_5.text()
+        data = pd.read_csv("test.csv", encoding = 'euc-kr')
+        data.loc[data["품명"]==name,"현재 수량"] = int(data.loc[data["품명"]==name,"현재 수량"]) - int(num)
+        data.to_csv("test.csv", encoding = 'euc-kr',index=False)
+        self.close()
+
+    def dsearchFunction(self):
+        name = self.lineEdit.text()
+        data = pd.read_csv("test.csv", encoding = 'euc-kr')
+        searched_data = data.loc[data['품명'] == name]
+        if searched_data.empty == False:
+            current = searched_data['현재 수량'].values[0]
+            degree = searched_data['단위'].values[0]
+            self.lineEdit_2.setText(str(current)) 
+            self.lineEdit_3.setText(degree)
+            self.pushButton_in.setEnabled(True)
+            self.pushButton_out.setEnabled(True)
+            self.pushButton_fdelete.setEnabled(True)
+            self.pushButton_in.clicked.connect(self.inFunction)
+            self.pushButton_out.clicked.connect(self.outFunction)
+            self.pushButton_fdelete.clicked.connect(self.fdeleteFunction)
+
+    def fdeleteFunction(self):
+        text = self.lineEdit.text()
+        data = pd.read_csv("test.csv", encoding = 'euc-kr')
+        data.drop(data[data['품명'] == text].index,inplace=True)
+        data.to_csv("test.csv", encoding = 'euc-kr',index=False)
+        self.close()
+
 class enroll(QDialog):
     def __init__(self, parent):
         super(enroll,self).__init__(parent)
@@ -19,8 +67,9 @@ class enroll(QDialog):
 
     def finalenrollFunction(self):
         data = pd.read_csv("test.csv", encoding = 'euc-kr')
-        data.loc[data.shape[0]+1] = [self.lineEdit.text(),self.lineEdit_2.text(),self.lineEdit_3.text(),self.lineEdit_4.text(),self.lineEdit_5.text(),self.lineEdit_6.text()]
-        data.to_csv("test.csv", encoding = 'euc-kr')
+        data.loc[data.shape[0]] = [self.lineEdit.text(),self.lineEdit_2.text(),self.lineEdit_3.text(),self.lineEdit_4.text(),self.lineEdit_5.text(),self.lineEdit_6.text()]
+        data.to_csv("test.csv", encoding = 'euc-kr',index=False)
+        self.close()
 
 class WindowClass(QMainWindow, form_class):
     def __init__(self):
@@ -29,12 +78,11 @@ class WindowClass(QMainWindow, form_class):
         self.pushButton_View.clicked.connect(self.viewFunction)
         self.pushButton_manage.clicked.connect(self.manageFunction)
         self.pushButton_enroll.clicked.connect(self.enrollFunction)
-        self.pushButton_history.clicked.connect(self.historyFunction)
         self.pushButton_info.clicked.connect(self.infoFunction)
         self.pushButton_Search.clicked.connect(self.searchFunction)
 
     def searchFunction(self):
-        column_headers = ['품명', '현재 수량', '기준 수량','단위','분류','판매처','주문필요량']
+        column_headers = ['품명', '현재 수량', '기준 수량','단위','분류','판매처','부족수량']
         self.tableWidget.setHorizontalHeaderLabels(column_headers)
         text = self.lineEdit_Search.text()
         data = pd.read_csv("test.csv", encoding = 'euc-kr')
@@ -46,7 +94,7 @@ class WindowClass(QMainWindow, form_class):
         self.setTableWidgetData(searched_data, row, col)
 
     def viewFunction(self):
-        column_headers = ['품명', '현재 수량', '기준 수량','단위','분류','판매처','주문필요량']
+        column_headers = ['품명', '현재 수량', '기준 수량','단위','분류','판매처','부족수량']
         self.tableWidget.setHorizontalHeaderLabels(column_headers)
         data = pd.read_csv("test.csv", encoding = 'euc-kr')
         row = data.shape[0]
@@ -69,96 +117,14 @@ class WindowClass(QMainWindow, form_class):
         self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
     def manageFunction(self):
-        print("test")
+        manage(self)
         
     def enrollFunction(self):
         enroll(self)
-        
-    def historyFunction(self):
-        print("test")
 
     def infoFunction(self):
         print("test")
-        """
-        self.action_open.triggered.connect(self.openFunction)
-        self.action_save.triggered.connect(self.saveFunction)
-        self.action_saveAsFunction.triggered.connect(self.saveAsFunction)
-        self.action_close.triggered.connect(self.close)
         
-        self.action_undo.triggered.connect(self.undoFunction)
-        self.action_cut.triggered.connect(self.cutFunction)
-        self.action_copy.triggered.connect(self.copyFunction)
-        self.action_paste.triggered.connect(self.pasteFunction)
-
-        self.action_find.triggered.connect(self.findFunction)
-
-        self.opened_file_path = '제목 없음'
-        self.opened = False
-
-    def findFunction(self):
-        findWindow(self)
-
-    def undoFunction(self):
-        self.plainTextEdit.undo()
-    
-    def cutFunction(self):
-        self.plainTextEdit.cut()
-
-    def copyFunction(self):
-        self.plainTextEdit.copy()
-
-    def pasteFunction(self):
-        self.plainTextEdit.paste()
-
-    def save_changed_data(self):
-        msgBox = QMessageBox()
-        msgBox.setText("변경 내용을 {}저장하시겠습니까?".format(self.opened_file_path))
-        msgBox.addButton('저장', QMessageBox.YesRole)
-        msgBox.addButton('저장 안 함', QMessageBox.NoRole)
-        msgBox.addButton('취소', QMessageBox.RejectRole)
-        ret = msgBox.exec_()
-        return ret
-
-    def closeEvent(self, event):
-        ret = self.save_changed_data()
-        if ret == 0:
-            self.saveFunction()
-        if ret == 2:
-            event.ignore()
-        
-
-    def save_file(self, fname):
-         data = self.plainTextEdit.toPlainText()
-         with open(fname,'w', encoding='UTF8') as f:
-            f.write(data)
-         self.opened = True
-         self.opened_file_path = fname
-
-    
-    def open_file(self, fname):
-        with open(fname, encoding='UTF8') as f:
-            data = f.read()
-        self.plainTextEdit.setPlainText(data)
-        self.opened = True
-        self.opened_file_path = fname
-
-    def openFunction(self):
-        fname = QFileDialog.getOpenFileName(self)
-        if fname[0]:   
-            self.open_file(fname[0])
-
-    def saveFunction(self):
-        if self.opened:
-            self.save_file(self.opened_file_path)
-        else:
-            self.saveAsFunction()
-    
-    def saveAsFunction(self):
-        fname = QFileDialog.getSaveFileName(self)
-        if fname[0]:
-            self.save_file(fname[0])
-"""
-
 app = QApplication(sys.argv)
 mainWindow = WindowClass()
 mainWindow.show()
